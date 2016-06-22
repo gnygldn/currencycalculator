@@ -1,0 +1,7 @@
+c:\users\gnygl\desktop\projects\currency lister\currency lister\bin\Debug\currency lister.exe.config
+c:\users\gnygl\desktop\projects\currency lister\currency lister\obj\Debug\currency lister.csprojResolveAssemblyReference.cache
+C:\Users\gnygl\Desktop\projects\currency lister\currency lister\bin\Debug\currency lister.exe
+C:\Users\gnygl\Desktop\projects\currency lister\currency lister\bin\Debug\currency lister.pdb
+C:\Users\gnygl\Desktop\projects\currency lister\currency lister\obj\Debug\currency lister.exe
+C:\Users\gnygl\Desktop\projects\currency lister\currency lister\obj\Debug\currency lister.pdb
+C:\Users\gnygl\Desktop\projects\currency lister\currency lister\bin\Debug\Newtonsoft.Json.dll
