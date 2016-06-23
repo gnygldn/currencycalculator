@@ -1,82 +1,112 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 using System.Net;
 using Newtonsoft.Json;
 
-namespace gny.CurrencyLister
+namespace CurrencyCalculator
 {
-    class Program
+    public class JsnList
     {
-        private static string changethis;
-        private static string changeinto;
-        private static JsnList mylist1;
-        private static double mny;
-        private static double changerate;
-        private string money;
+        public Currencypair[] currencyPairs { get; set; }
+    }
 
-        public class JsnList
+    public class Currencypair
+    {
+        public string baseCurrency { get; set; }
+        public string counterCurrency { get; set; }
+        public float rate { get; set; }
+    }
+
+    class Calculator
+    {
+        
+        private static string before;
+        private static string after;
+        private static string amount;
+        private static double amount1;
+        private static double currencyRate;
+        private static string myInfo;
+        private static JsnList myInfo1;
+        private static string myUrl;
+
+        static void Main(string[] args)
         {
-            public Currencypair[] currencyPairs { get; set; }
+            Calculator calculate = new Calculator();
+            
+            calculate.GetCurrentCurreny("enter your currency ");
+            calculate.GetNextCurreny("enter the currency you want to get");
+            calculate.GetAmount("enter the amount");
+            calculate.GetUrl();
+            calculate.GetInfo();
+            calculate.TranslateInfo();
+            calculate.ChangeAmount();
+            currencyRate = calculate.GetRate();
+            calculate.Result();
+            Console.ReadKey();
+            
+            
         }
 
-        public class Currencypair
+        private void GetAmount(string p)
         {
-            public string baseCurrency { get; set; }
-            public string counterCurrency { get; set; }
-            public float rate { get; set; }
+            Console.WriteLine(p);
+            amount = Console.ReadLine();
         }
 
-        public double findchangerate(string changethis, string changeinto) 
+        private void GetNextCurreny(string p)
         {
-            foreach (var pair in mylist1.currencyPairs)
+            Console.WriteLine(p);
+            after = Console.ReadLine();
+        }
+
+        private void GetCurrentCurreny(string p)
+        {
+            Console.WriteLine(p);
+            before = Console.ReadLine();
+        }
+
+        private void TranslateInfo()
+        {
+            myInfo1 = (JsnList)JsonConvert.DeserializeObject(myInfo, typeof(JsnList));
+        }
+
+        private void Result()
+        {
+
+            Console.WriteLine("your currency is {0}", amount1 * currencyRate);
+            Console.ReadKey();
+        }
+
+        public void ChangeAmount()
+        {
+            amount1 = Convert.ToDouble(amount);
+        }
+
+
+        public double GetRate()
+        {
+            foreach(var pairs in myInfo1.currencyPairs)
             {
-                if (pair.counterCurrency == changeinto)
+                if (after == pairs.counterCurrency)
                 {
-                    return pair.rate;
+                    return pairs.rate;
                 }
             }
             return 0;
         }
 
-        public double changecurrency(double money, double changerate)
+        public void GetUrl()
         {
-            return money * changerate;
+           myUrl = ConfigurationManager.AppSettings["url"] + "/v1/currency/GetExchangeRates?basecurrency=" + before + "&access_token=" + ConfigurationManager.AppSettings["access_token"];
         }
-
-        static void Main(string[] args)
-        {
-            Program mycurrency = new Program();
-
-            mycurrency.getparameters();
-
-            mycurrency.getlist();
-
-            changerate = mycurrency.findchangerate(changethis, changeinto);
-            
-            Console.WriteLine("yourchange : {0}", mycurrency.changecurrency(mny, changerate));
-
-            Console.ReadKey();
-        }
-
-        public void getlist()
+        public void GetInfo()
         {
             WebClient client = new WebClient();
-            var mylist = client.DownloadString("http://api.dev.paximum.com/v1/currency/GetExchangeRates?basecurrency=" + changethis + "&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGgucGF4aW11bS5jb20iLCJhdWQiOiJodHRwczovL2FwaS5wYXhpbXVtLmNvbSIsIm5iZiI6MTQ2NjU5NTI5NSwiZXhwIjoxNDY2NjgxNjk1LCJzdWIiOiI2NmE1MDZhNC1jZjI0LTQ1NjAtODdmZS1lYjQ1ZWJjOTUzOTkiLCJyb2xlIjoicGF4OmRldmVsb3BlciJ9.OePUvylIcVnEQ1E5aeBiB8fuvuVHWXvTUW0u7cG3_QM");
-            mylist1 = (JsnList)JsonConvert.DeserializeObject(mylist, typeof(JsnList));
+            myInfo = client.DownloadString(myUrl);
         }
-
-        public void getparameters()
-        {
-            Console.WriteLine("Please enter the curreny you want to translate");
-            changethis = Console.ReadLine();
-            Console.WriteLine("Please enter the curreny you want to get");
-            changeinto = Console.ReadLine();
-            Console.WriteLine("Please enter how much you want to change");
-            money = Console.ReadLine();
-            mny = Convert.ToDouble(money);
-        }    
     }
 }
